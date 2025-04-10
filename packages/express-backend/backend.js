@@ -1,3 +1,5 @@
+// for changes to be permanent, we would have to write the data somewhere when we want changes to be commited.
+// this can be a file on our system or a database.
 // backend.js
 import express from "express";
 
@@ -48,6 +50,11 @@ const findUserByName = (name) => {
 const findUserById = (id) =>
   users["users_list"].find((user) => user["id"] === id);
 
+const addUser = (user) => {
+  users["users_list"].push(user);
+  return user;
+};
+
 
 //////////////
 // REST API //
@@ -75,6 +82,12 @@ app.get("/users/:id", (req, res) => {
   } else {
     res.send(result);
   }
+});
+
+app.post("/users", (req, res) => {
+  const userToAdd = req.body;
+  addUser(userToAdd);
+  res.send();
 });
 
 app.listen(port, () => {
