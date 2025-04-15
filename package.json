@@ -17,6 +17,9 @@
   "homepage": "https://github.com/juanito-lenteja/csc-307-app#readme",
   "description": "",
   "workspaces": [
-  "packages/*"
-  ]
+    "packages/*"
+  ],
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
 }
