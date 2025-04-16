@@ -8,15 +8,29 @@ import Form from "./Form";
 function MyApp() {
   const [characters, setCharacters] = useState([]);
 
-  function updateList(person) {
-    setCharacters([...characters, person]);
-  }
+  function updateList(person) { 
+    postUser(person)
+      .then((res) => res.status == 201 ? res.json() : undefined)
+      .then((json) => setCharacters([...characters, json]))
+      .catch((error) => {
+        console.log(error);
+      })
+  } 
 
   function removeOneCharacter(index) {
-    const updated = characters.filter((character, i) => {
-      return i !== index;
-    });
-    setCharacters(updated);
+    const userId = characters[index]["id"];
+    deleteUser(userId)
+      .then((res) => {
+        if(res.status == 204)
+        {
+          const updatedUsers = characters.filter((_, i) => i !== index);
+          setCharacters(updatedUsers);
+        } else if (res.status == 404)
+          throw new Error("User not found")
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   useEffect(() => {
@@ -29,6 +43,25 @@ function MyApp() {
   function fetchUsers() {
     const promise = fetch("http://localhost:8000/users");
     return promise;
+}
+
+function postUser(person) {
+  const promise = fetch("Http://localhost:8000/users", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(person)
+  });
+
+  return promise;
+}
+
+function deleteUser(id) {
+  const promise = fetch("Http://localhost:8000/users/" + id, {
+    method: "DELETE"
+  });
+  return promise;
 }
 
   return (

@@ -4,6 +4,8 @@
 import express from "express";
 import cors from "cors";
 
+const IDMAX = 1999999;
+
 const users = {
   users_list: [
     {
@@ -49,13 +51,21 @@ const findUserByName = (name) => {
   );
 };
 
+
 const findUserById = (id) =>
   users["users_list"].find((user) => user["id"] === id);
+
 
 const addUser = (user) => {
   users["users_list"].push(user);
   return user;
 };
+
+
+function genID() {
+  return Math.floor(Math.random() * IDMAX);
+}
+
 
 
 //////////////
@@ -87,9 +97,22 @@ app.get("/users/:id", (req, res) => {
 });
 
 app.post("/users", (req, res) => {
-  const userToAdd = req.body;
+  const userToAdd = { id: String(genID()), ...req.body };
   addUser(userToAdd);
-  res.send();
+  res.status(201).send(userToAdd);
+});
+
+app.delete('/users/:id', (req, res) => {
+  const userId = req.params.id;
+  let result = findUserById(userId);
+
+  if (result === undefined) {
+    return res.status(404).send();
+  }
+  else {
+    users["users_list"] = users["users_list"].filter((user) => user.id !== userId);
+    res.status(204).send();
+  }
 });
 
 app.listen(port, () => {
