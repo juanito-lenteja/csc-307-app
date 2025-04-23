@@ -18,7 +18,7 @@ function MyApp() {
   } 
 
   function removeOneCharacter(index) {
-    const userId = characters[index]["id"];
+    const userId = characters[index]["_id"]; // _id for mongoose
     deleteUser(userId)
       .then((res) => {
         if(res.status == 204)
